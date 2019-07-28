@@ -1,0 +1,12 @@
+<div class="row mr-0 document-actions" style="display:inline-flex;position: absolute;">
+    <div *ngIf="mainParams.editProduct" class="icon">
+    <fieldset title="Edit" (click)="openEditrole(mainParams,'edit')"  >
+    <ion-icon   *ngIf="_roleServe.access_checking('addModifyProduct')" name="create"></ion-icon>
+    </fieldset>
+    </div>
+    <div *ngIf="mainParams.viewProduct" class="icon">
+    <fieldset title="View" (click)="openEditrole(mainParams,'view');">
+    <ion-icon name="eye"></ion-icon>
+    </fieldset>
+    </div>
+    </div>

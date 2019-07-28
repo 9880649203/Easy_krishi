@@ -1,0 +1,93 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+        <ion-button color="primary" (click)="closeModal()">
+            <ion-icon name="close" color="light"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+    <ion-title>
+    	Search for Order
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item>
+	<ion-label>Category</ion-label>
+	<ion-select [(ngModel)]="toppings" multiple="true">
+	  <ion-select-option>Category 1</ion-select-option>
+	  <ion-select-option>Category 2</ion-select-option>
+	  <ion-select-option>Category 3</ion-select-option>
+	  <ion-select-option>Category 4</ion-select-option>
+	</ion-select>
+  </ion-item>
+
+
+	<ion-item>
+		<ion-label>Products</ion-label>
+		<ion-select [(ngModel)]="toppings" multiple="true">
+		  <ion-select-option>Product 1</ion-select-option>
+		  <ion-select-option>Product 2</ion-select-option>
+		  <ion-select-option>Product 3</ion-select-option>
+		  <ion-select-option>Product 4</ion-select-option>
+		</ion-select>
+	</ion-item>
+
+	<ion-item>
+		<ion-label>From Date</ion-label>
+		<ion-datetime displayFormat="MM/DD/YYYY" min="1994-03-14" max="2012-12-09"></ion-datetime>
+	</ion-item>
+
+	<ion-item>
+	    <ion-label>To Date</ion-label>
+		<ion-datetime displayFormat="MM/DD/YYYY" min="1994-03-14" max="2012-12-09"></ion-datetime>
+	</ion-item>
+
+	<ion-item>
+		<ion-label>District</ion-label>
+		<ion-select [(ngModel)]="toppings" multiple="true">
+		  <ion-select-option>Aaa</ion-select-option>
+		  <ion-select-option>Bbbb</ion-select-option>
+		  <ion-select-option>Cccc</ion-select-option>
+		  <ion-select-option>Dddd</ion-select-option>
+		</ion-select>
+	</ion-item>
+	<ion-item>
+		<ion-label>Place</ion-label>
+		<ion-select [(ngModel)]="toppings" multiple="true">
+		  <ion-select-option>Aaa</ion-select-option>
+		  <ion-select-option>Bbbb</ion-select-option>
+		  <ion-select-option>Cccc</ion-select-option>
+		  <ion-select-option>Dddd</ion-select-option>
+		</ion-select>
+	</ion-item>
+	
+	<ion-item>
+		<ion-label>Agency</ion-label>
+		<ion-select [(ngModel)]="toppings" multiple="true">
+		  <ion-select-option>Aaa</ion-select-option>
+		  <ion-select-option>Bbbb</ion-select-option>
+		  <ion-select-option>Cccc</ion-select-option>
+		  <ion-select-option>Dddd</ion-select-option>
+		</ion-select>
+	</ion-item>
+	
+	<ion-item>
+		<ion-label>Field Agent</ion-label>
+		<ion-select [(ngModel)]="toppings" multiple="true">
+		  <ion-select-option>Aaa</ion-select-option>
+		  <ion-select-option>Bbbb</ion-select-option>
+		  <ion-select-option>Cccc</ion-select-option>
+		  <ion-select-option>Dddd</ion-select-option>
+		</ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-range dualKnobs="true" [(ngModel)]="minmaxprice" min="10" max="1000" step="10" class="no-padding-top">
+        <ion-label slot="start"><ion-text color="primary">$ {{minmaxprice.lower}}</ion-text></ion-label>
+        <ion-label slot="end"><ion-text color="primary">$ {{minmaxprice.upper}}</ion-text></ion-label>
+      </ion-range>
+	</ion-item>
+
+	<ion-button expand="full" color="primary" (click)="closeModal()">Filter Results</ion-button>
+</ion-content>

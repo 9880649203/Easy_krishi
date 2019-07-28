@@ -1,0 +1,196 @@
+<app-header></app-header>
+<ion-content>
+
+    <ion-fab vertical="top" horizontal="right" class="animated fadeInDown" style="top: 37px;
+  z-index: 100px;position: fixed;">
+    <ion-fab-button color="primary" (click)="togglePopupMenu()"
+      style="height: 55px; font-size: 11px;border-top: 7px solid #045d6f;border-radius: 32px;background-color: #046a7e !important;">
+      <ion-ripple-effect></ion-ripple-effect>
+      <ion-icon name="options"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <div class="popup-menu">
+      <div class="popup-menu-overlay" [ngClass]="{'in': openMenu}"></div>
+      <div class="popup-menu-panel" [ngClass]="{'in': openMenu}">
+            <div style="padding: 10px 0px 0px 10px;height: 5px;">
+              <ion-icon style="font-size: 25px;cursor: pointer;color: #036479;" name="close" (click)="togglePopupMenu()">
+              </ion-icon>
+            </div>
+        <div class="popup-menu-item">
+            <mat-tab-group style="margin-bottom:60px; margin-left:12px">
+                <mat-tab label="Orders">
+                      <app-filter></app-filter>
+                </mat-tab>
+                <mat-tab label="Indents">
+                      <app-indent-filter></app-indent-filter>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+      </div>
+  </div>      
+  
+  <!-- <app-filter  *ngIf="toggleOrder"></app-filter>
+
+  <app-indent-filter *ngIf="toggleIndent"></app-indent-filter> -->
+  <!-- <ion-item lines="none">
+        <ion-label>
+          <ion-text class="fw700" color="dark">Orders ></ion-text>
+        </ion-label>
+        <ion-button shape="box" style="text-transform:initial"  size="small"
+              (click)="addOrder()" title="Add orders">
+             + Add Order
+        </ion-button>
+        <ion-button  shape="box" style="text-transform:initial" size="small"
+             (click)="addIndent()" title="Add Indent">
+            + Add Indent
+          </ion-button>
+      </ion-item> -->
+      
+
+  
+
+
+  <ion-item lines="none">
+    <ion-label>
+      <ion-text class="fw700" color="dark">Orders </ion-text>
+    </ion-label>
+
+    <div *ngIf="role_access.role != 'Order Manager'">
+      <ion-button *ngIf="roleBaseAccesService.access_checking('createModifyOrder')" style="font-size: 11px;font-weight: 100;float:right"
+        shape="box" style="text-transform:initial" size="small" (click)="addOrder()" title="Add orders">       
+        Add
+      </ion-button>
+    </div>
+    <div *ngIf="role_access.role == 'Order Manager'">
+      <ion-button 
+        shape="box" [matMenuTriggerFor]="menu" size="small">       
+        Add
+      </ion-button>     
+          <mat-menu #menu="matMenu">
+            <span mat-menu-item
+            *ngIf="roleBaseAccesService.access_checking('createModifyOrder')"
+            (click)="addOrder()"
+            >Order</span>
+            <span mat-menu-item
+            *ngIf="roleBaseAccesService.access_checking('createModifyIndent')"
+            (click)="addIndent()" 
+            >Indent</span>
+        </mat-menu>
+    </div>
+
+  </ion-item>
+
+
+  <mat-tab-group style="margin-bottom:60px; margin-left:12px">
+    <mat-tab label="Orders" *ngIf="toggleOrder">
+      <div style="margin-top:30px;">
+
+        <ion-row class="m-10">
+          <ion-col no-padding size-xs="12" size-sm="12" size-md="10" size-lg="10" size-xl="10">
+            <span style="font-size:14px">Total Orders {{ totalOrderCount }}</span>
+          </ion-col>
+          <ion-col no-padding size-xs="12" size-sm="12" size-md="2" size-lg="2" size-xl="2">
+            <div>
+              <div class="edit-dropdown documentpageSortBy" style="float: right;">
+                <div class="multiselect">
+                  <div class="drop-down">
+                    <div class="selectBox" (click)="toggle = !toggle">
+                      <select class="jj-dropdown">
+                        <option>Select Columns to Show:</option>
+                      </select>
+                      <div class="overSelect" id="rdop-list-dropdown1"></div>
+                    </div>
+                    <div class="checkboxes" aria-labelledby="rdop-list-dropdown1"
+                      [ngClass]="toggle ? 'display-block' : 'display-none'">
+                      <div class="all-columns">
+                        <label *ngFor="let item of orderHeader"
+                          [ngClass]="item.headerName == 'File name' ? 'disable-click default-columns':''"
+                          class="container ng-star-inserted">
+                          <input class="col-checkbox jj-text-dropdown" type="checkbox" checked
+                            (click)="hideShowColumns(item)" />{{ item.headerName }}
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+          <ag-grid-angular #agGrid style="width: 100%; height:250px;" class="ag-theme-balham"
+            [toolPanelSuppressSideButtons]="true" [gridOptions]="gridOptions" [enableSorting]="true"
+            [rowData]="allrowdata" [enableFilter]="true" [icons]="icons" [enableColResize]="true">
+          </ag-grid-angular>
+        </ion-row>
+      </div>
+     
+    </mat-tab>
+
+
+
+    <mat-tab label="Indents" *ngIf="toggleIndent">
+      <div style="margin-top:30px;">
+        
+
+        <ion-row class="m-10">
+          <ion-col no-padding size-xs="12" size-sm="12" size-md="10" size-lg="10" size-xl="10">
+            <span style="font-size:14px">Total Indent {{totalIndentCount}}</span>
+          </ion-col>
+          <ion-col no-padding size-xs="12" size-sm="12" size-md="2" size-lg="2" size-xl="2">
+            <div>
+              <div class="edit-dropdown documentpageSortBy" style="float: right;">
+                <div class="multiselect">
+                  <div class="drop-down">
+                    <div class="selectBox" (click)="toggle = !toggle">
+                      <select class="jj-dropdown">
+                        <option>Select Columns to Show:</option>
+                      </select>
+                      <div class="overSelect" id="rdop-list-dropdown1"></div>
+                    </div>
+                    <div class="checkboxes" aria-labelledby="rdop-list-dropdown1"
+                      [ngClass]="toggle ? 'display-block' : 'display-none'">
+                      <div class="all-columns">
+                        <label *ngFor="let item of indentHeader"
+                          [ngClass]="item.headerName == 'File name' ? 'disable-click default-columns':''"
+                          class="container ng-star-inserted">
+                          <input class="col-checkbox jj-text-dropdown" type="checkbox" checked
+                            (click)="hideShowColumns1(item)" />{{
+            item.headerName }}
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+          <ag-grid-angular #agGrid style="width: 100%; height:250px;" class="ag-theme-balham"
+            [toolPanelSuppressSideButtons]="true" [rowData]="indentdata" [enableSorting]="true"
+            [gridOptions]="indGridOptions" [enableFilter]="true" [icons]="icons" [enableColResize]="true">
+          </ag-grid-angular>
+        </ion-row>
+      </div>
+     
+    </mat-tab>
+
+  </mat-tab-group>
+
+
+  <!-- <div *ngIf="toggleOrder">
+      &nbsp;&nbsp;
+      <span style="font-size:14px; FONT-WEIGHT: 700; COLOR: #1a716e;padding-top:12px">Total Orders {{orderService.credits.length}}</span>
+    </div>
+
+
+      <div *ngIf="toggleIndent">
+        &nbsp;&nbsp; Indent page
+        <span style="font-size:14px; FONT-WEIGHT: 700; COLOR: #1a716e;padding-top:12px">Total Indent {{orderService.credits.length}}</span>
+      </div>
+
+      -->
+
+  <!-- <app-filter></app-filter> -->
+
+</ion-content>

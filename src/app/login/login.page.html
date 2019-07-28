@@ -1,0 +1,95 @@
+<ion-content padding class="animated fadeIn">
+  <div class="div inner">
+    <div class="row main2 elevation-12">
+      <div class="row col-centered nopadding" style="border-bottom: 2px double #f1f0d8;">
+        <div padding-horizontal text-center class="animated fadeInDown pb-2">
+          <h1>
+            <span>E</span>
+            <span>a</span>
+            <span>s</span>
+            <span>y</span>
+            <span>k</span>
+            <span>r</span>
+            <span>i</span>
+            <span>s</span>
+            <span>h</span>
+            <span>i</span>
+          </h1>
+        </div>
+      </div>
+      <div class="col-md-12 col-centered nopadding" style="padding: 0px;">
+        <main>
+          <br />
+          <form class="list-form" novalidate [formGroup]="loginform">
+            <div class=" row d-flex justify-content-sm-center">
+              <div class="col-8">
+                <div class="form-field">
+                  <label for="field" class="label--required font-md">User Name</label>
+                  <section>
+                    <ion-icon style="font-size: 12px;" name="call" item-start class="text-black icon icon-person">
+                    </ion-icon>
+
+                    <input id="field" required type="text" [(ngModel)]="userData.mobile_no" formControlName="mobile_no"
+                      [class.error1]="!loginform.controls.mobile_no.valid && loginform.controls.mobile_no.dirty" />
+                  </section>
+                </div>
+
+                <div class="form-field">
+                  <label for="mobile_no" class="label--required font-md">Password</label>
+                  <section>
+                    <ion-icon style="font-size: 12px;" name="lock" item-start class="text-black icon icon-person">
+                    </ion-icon>
+                    <input id="mobile_no" type="password" [(ngModel)]="userData.password" formControlName="password"
+                      [class.error1]="!loginform.controls.password.valid && loginform.controls.password.dirty" />
+                  </section>
+                </div>
+
+                <span *ngIf="noDetails">
+                  <div class="error"
+                    *ngIf=" loginform.get('mobile_no').required || loginform.get('password').required||loginform.get('mobile_no').untouched || loginform.get('password').touched || loginform.get('password').touched || loginform.get('password').untouched || loginform.get('mobile_no').dirty || loginform.get('password').dirty || loginform.get('mobile_no').pristine || loginform.get('mobile_no').pristine ">
+                    <span class="err font-md"> Invalid Username or Password</span>
+                  </div>
+                </span>
+                <span *ngIf="userData.mobile_no !=='' && userData.password !== ''">
+                  <span *ngIf="message " class="err font-md">
+                    Invalid credentials for {{userData.mobile_no}}
+                  </span>
+                </span>
+                <br>
+                <ion-row class="form-content-labels" style="font-size: 13px;;font-weight: 700;">
+                  <ion-col size="12" class="form-check-inline">
+                    <ion-col size="4" class="col-form-label" style="color:#0a2c33;">
+                      Login user type
+                    </ion-col>
+                    <label class="customradio">
+                      <span class="radiotextsty" style="color:#0a2c33;">Field Agent &nbsp;</span>
+                      <input type="radio" name="gender" [checked]="toggleFA" (click)="setUserType('Field Agent')"
+                        style="margin-top: -6px;">
+                      <span class="checkmark" style="margin-left: 5px;"></span>
+                    </label>
+                    <label class="customradio">
+                      <span class="radiotextsty" style="color:#0a2c33;"> Other &nbsp;</span>
+                      <input type="radio" name="gender" [checked]="toggleOther" (click)="setUserType('Other')"
+                        style="margin-top: -6px;">
+                      <span class="checkmark" style="margin-left: 5px;"></span>
+                    </label>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col no-marin no-padding>
+                    <a class="btn font-md" style="color:#fff;">Forgot
+                      Password?</a>
+                    <ion-button icon-start color="primary" style="font-size: 11px;
+                  font-weight: 100;float: right" (click)="login(data)">
+                      Login
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </div>
+            </div>
+          </form>
+        </main>
+      </div>
+    </div>
+  </div>
+</ion-content>

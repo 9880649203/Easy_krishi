@@ -1,0 +1,614 @@
+<ion-header>
+    <ion-toolbar  color="primary" style="color:white !important">
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-title *ngIf="modalType=='addIndent'" no-padding no-margin style="font-size:14px;align-content: center" class="text-left">
+              <h4 style="color:#000">Add Indent</h4>
+            </ion-title>
+            <ion-title *ngIf="modalType=='editIndent'" no-padding no-margin style="font-size:14px;align-content: center" class="text-left">
+              <h4 style="color:#000">Edit Indent</h4>
+            </ion-title>
+            <ion-title *ngIf="modalType=='viewIndent'" no-padding no-margin style="font-size:14px;align-content: center" class="text-left">
+              <h4 style="color:#000">View Indent</h4>
+            </ion-title>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-toolbar>
+  </ion-header>
+  <!-- addOrder -->
+  
+  <ion-content *ngIf="modalType=='addIndent'" padding>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-12 col-md-12 col-lg-4 col-xl-3>
+  
+          <form novalidate [formGroup]="indentForm">
+  
+            <ion-row class="form-content-labels">
+              <ion-col size="4"> Ordered_for </ion-col>
+              <ion-col size="8">
+  
+                <mat-radio-group aria-label="Select an option">
+                  <mat-radio-button value="agency" checked (click)="toggleOrderedFor='agency'">Agency</mat-radio-button>
+                  <mat-radio-button value="others" (click)="toggleOrderedFor='others'">Others</mat-radio-button>
+                </mat-radio-group>
+  
+                <!-- <ng-multiselect-dropdown [placeholder]="'Select category'" [data]="CategoryName"
+                    [(ngModel)]="productData.category_name" formControlName='category_name' [settings]="categorySettings"
+                    (onSelect)="onCategorySelect($event)" disabled
+                    [class.error1]="!newProductForm.controls.category_name.valid && newProductForm.controls.category_name.dirty">
+                  </ng-multiselect-dropdown> -->
+  
+                <ng-multiselect-dropdown *ngIf="toggleOrderedFor=='agency'" [placeholder]="'Agency'" [data]="agencyList" [(ngModel)]="indentModal.ordered_for"
+                  formControlName="ordered_for" [settings]="agencydropdownSettings">
+                </ng-multiselect-dropdown>
+  
+                <input *ngIf="toggleOrderedFor=='others'" type="text" [(ngModel)]="indentModal.ordered_forother" class="form-control" placeholder="Others"
+                  formControlName="ordered_for" />
+              </ion-col>
+            </ion-row>
+  
+  
+            <ion-row class="form-content-labels">
+              <ion-col size="4">
+                On Behalf of
+              </ion-col>
+              <ion-col size="8">
+              
+                <ng-multiselect-dropdown [placeholder]="'On behalf of'" [data]="agencyList" [(ngModel)]="indentModal.on_behalf_of" [settings]="agencydropdownSettings"
+                  formControlName="on_behalf">
+                </ng-multiselect-dropdown>
+              </ion-col>
+            </ion-row>
+  
+            <ion-row class="form-content-labels">
+              <ion-col size="4">
+                Category*
+              </ion-col>
+              <ion-col size="8">
+                <ng-multiselect-dropdown [placeholder]="'category'" [data]="category" [(ngModel)]="indentModal.category" [settings]="categorydropdownSettings"
+                  (onSelect)="onItemSelect($event, 'category')" (onSelectAll)="onSelectAll($event)" formControlName="category">
+                </ng-multiselect-dropdown>
+              </ion-col>
+            </ion-row>
+  
+            <ion-row class="form-content-labels">
+              <ion-col size="4">
+                Products*
+              </ion-col>
+              <ion-col size="8">
+                <ng-multiselect-dropdown [placeholder]="'products'" [data]="products" [(ngModel)]="indentModal.products" [disabled]="disabled"
+                  [settings]="productdropdownSettings" (onSelect)="onItemSelect($event, 'product')" formControlName="products">
+                </ng-multiselect-dropdown>
+              </ion-col>
+            </ion-row>
+  
+            <ion-row class="form-content-labels">
+              <ion-col size="4">
+                Unit*
+              </ion-col>
+              <ion-col size="8">
+  
+                <ng-multiselect-dropdown [placeholder]="'Unit'" [data]="unitDropval" [(ngModel)]="indentModal.units" [disabled]="disabled"
+                  [settings]="dropdownSettings" formControlName="units">
+                </ng-multiselect-dropdown>
+              </ion-col>
+            </ion-row>
+  
+            <ion-row class="form-content-labels">
+              <ion-col size="4">
+                Quantity*
+              </ion-col>
+              <ion-col size="8">
+                <input type="number" [(ngModel)]="indentModal.quantity" class="form-control" placeholder="Enter Quantity" formControlName="quantity"
+                  (keyup)="onItemSelect($event, 'quantity')" [class.error1]="!indentForm.controls.quantity.valid && indentForm.controls.quantity.dirty"
+                />
+              </ion-col>
+            </ion-row>
+  
+            <ion-row class="form-content-labels">
+              <ion-col size="4">
+                Price
+              </ion-col>
+              <ion-col size="8">
+                <input type="text" [disabled]="disabled" [(ngModel)]="indentModal.price" class="form-control" placeholder="Enter Price" formControlName="price"
+                  [class.error1]="!indentForm.controls.price.valid && indentForm.controls.price.dirty" />
+              </ion-col>
+            </ion-row>
+  
+            <div>
+              <ion-button *ngIf="!ShowAddMoreIndents" [disabled]="!indentForm.valid" class="text-list float-right" (click)="addMoreIndent(indentForm.value)">
+                Proceed</ion-button>
+                <ion-button class="text-list float-right" (click)="modalclose()">
+                    Cancle</ion-button>
+            </div>
+  
+  
+          </form>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  
+    <!-- </ion-list> -->
+    <!-- addMoreorders -->
+    <div *ngIf="ShowAddMoreIndents">
+  
+      <table class="table table-striped table-bordered table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Category</th>
+            <th scope="col">Products</th>        
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Unit</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let fd of formdataarray">
+          <tr class="table-success ellipsis">
+            <td>
+              <div style="width:50px;"> {{fd.category}}</div>
+              <div class="tooltip">{{fd.category}}</div>
+            </td>
+            <td>
+              <div style="width:60px;">{{fd.products}}</div>
+              <div class="tooltip">{{fd.products}}</div>
+            </td>
+           
+            <td>
+              <div style="width: 40px">{{fd.quantity}}</div>
+              <div class="tooltip">{{fd.quantity}}</div>
+            </td>
+            <td>
+              <div style="width: 40px">{{fd.price}}</div>
+              <div class="tooltip">{{fd.price}}</div>
+            </td>
+
+            <td>
+                <div style="width: 40px">{{fd.units}}</div>
+                <div class="tooltip">{{fd.units}}</div>
+              </td>
+          </tr>
+  
+        </tbody>
+      </table>
+  
+  
+  
+      <form novalidate [formGroup]="moreindentForm">
+        <ion-row class="form-content-labels">
+          <ion-col size="4" style="padding-top: 13px">
+            Expected Date
+          </ion-col>
+          <ion-col size="8">
+  
+            <ion-datetime name="expecteddate" placeholder="Expected date" displayFormat="DD/MM/YYYY" [(ngModel)]="indentModal.expected_date"
+              formControlName="expected_date"></ion-datetime>
+          </ion-col>
+        </ion-row>
+        <ion-row class="form-content-labels">
+          <ion-col size="4" style="padding-top: 13px">
+            Delivered Date
+          </ion-col>
+          <ion-col size="8">
+  
+            <ion-datetime name="delivereddate" placeholder="Delivered date" displayFormat="DD/MM/YYYY" [(ngModel)]="indentModal.delivered_date"
+              formControlName="delivered_date"></ion-datetime>
+          </ion-col>
+        </ion-row>
+  
+        <ion-row [ngClass]="{displayIonrow: toggleOrderedFor=='agency'}" class="form-content-labels">
+          <ion-col size="4">
+            Place*
+          </ion-col>
+          <ion-col size="8">
+            <input type="text" [(ngModel)]="indentModal.place" class="form-control" placeholder="Enter Place" formControlName="place"
+            />
+          </ion-col>
+        </ion-row>
+  
+        <ion-row [ngClass]="{displayIonrow: toggleOrderedFor=='agency'}" class="form-content-labels">
+          <ion-col size="4">
+            Pincode*
+          </ion-col>
+          <ion-col size="8">
+            <input type="text" [(ngModel)]="indentModal.pincode" class="form-control" placeholder="Enter Pincode" formControlName="pincode"
+            />
+          </ion-col>
+        </ion-row>
+  
+        <ion-row [ngClass]="{displayIonrow: toggleOrderedFor=='agency'}" class="form-content-labels">
+          <ion-col size='4'>
+            <ion-label> State* </ion-label>
+          </ion-col>
+          <ion-col size="8">
+  
+            <!-- <ng-multiselect-dropdown [placeholder]="'Select state'" [data]="stateffff" 
+            [(ngModel)]="indentModal.state"
+            [disabled]="disabled" [settings]="statedropDownSettings" formControlName="state">
+          </ng-multiselect-dropdown> -->
+  
+            <input type="text" [(ngModel)]="indentModal.state" placeholder="Select state" class="form-control" formControlName="state"
+            />
+  
+          </ion-col>
+  
+        </ion-row>
+  
+        <ion-row [ngClass]="{displayIonrow: toggleOrderedFor=='agency'}" class="form-content-labels">
+          <ion-col size='4'>
+            <ion-label> District* </ion-label>
+          </ion-col>
+          <ion-col size="8">
+            <!-- <ng-multiselect-dropdown [placeholder]="'Select District'" [data]="district"
+            [(ngModel)]="indentModal.district" [settings]="dropdownSettings"
+             formControlName="district">
+          </ng-multiselect-dropdown> -->
+  
+            <input type="text" [(ngModel)]="indentModal.district" placeholder="Select District" class="form-control" formControlName="district"
+            />
+          </ion-col>
+        </ion-row>
+  
+        <!-- <ion-item no-lines class="minheight">
+          <div class="error" *ngIf="indentForm.get('unit').hasError('required') && indentForm.get('unit').touched">
+            Please enter Place
+          </div>
+        </ion-item> -->
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            Total order
+          </ion-col>
+          <ion-col size="8">
+            <input type="text" [(ngModel)]="indentModal.total_order" placeholder="Total order" class="form-control" formControlName="total_order"
+            />
+          </ion-col>
+        </ion-row>
+  
+        <!-- Total Price is Auto Calculated  -->
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            Total Price*
+          </ion-col>
+          <ion-col size="8">
+            <input type="number" disabled [(ngModel)]="indentModal.total_price" placeholder="Total price" class="form-control" formControlName="total_price"
+            />
+          </ion-col>
+        </ion-row>
+  
+       
+  
+        <ion-button class="text-list float-right" type="submit" [disabled]="moreindentForm.invalid" (click)="addtotalOrder(moreindentForm.value)">
+          Create</ion-button>
+        <ion-button class="text-list float-right" (click)="modalclose()">
+          Cancel</ion-button>
+  
+      </form>
+    </div>
+  
+  </ion-content>
+  
+
+
+
+
+
+
+
+  <ion-content *ngIf="modalType=='editIndent'" padding>
+
+      <form novalidate [formGroup]="editindentForm">
+    
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            Indent ID
+          </ion-col>
+          <ion-col size="8">             
+                 <input [(ngModel)]="editindentForm.controls.indent_id.value" class="form-control" formControlName="indent_id" readonly [placeholder]="editindentForm.controls.indent_id.value" />
+          </ion-col>
+        </ion-row>
+    
+        <!-- <ion-row class="form-content-labels">
+          <ion-col size="4">
+            Ordered For
+    
+          </ion-col>
+          <ion-col size="8">
+            <input type="text" [(ngModel)]="OrderData.order_for" class="form-control" placeholder="OrderedFor"
+              formControlName="ordered_for" readonly />
+          </ion-col>
+        </ion-row> -->
+    
+    
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            Status*
+          </ion-col>
+          <ion-col size="8">
+            <ng-select [placeholder]="editindentForm.controls.indent_status.value" [items]="status" [(ngModel)]="editindentForm.controls.indent_status.value"
+              formControlName="indent_status" (onSelect)="setOrderType($event)">
+            </ng-select>
+          </ion-col>
+        </ion-row>
+    
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            TotalPrice
+          </ion-col>
+          <ion-col size="8">
+            <input type="text" [(ngModel)]="editindentForm.controls.price.value" class="form-control" [placeholder]="editindentForm.controls.price.value"
+              formControlName="price" disabled />
+    
+          </ion-col>
+        </ion-row>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered table-sm">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Products</th>
+                <th scope="col">Unit</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+              </tr>  
+            </thead>
+             <tbody formArrayName="items" *ngFor="let fd of editindentForm.get('items').controls; let i = index;">
+              <tr [formGroupName]="i" class="table-success ellipsis"> 
+                  <!-- <tbody formArrayName="items" *ngFor="let fd of OrderData.products; let i = index">
+                      <tr [formGroupName]="i" class="table-success ellipsis">  -->
+                       
+                <td>
+    
+                  <ng-multiselect-dropdown [placeholder]="editindentForm.controls.items.controls[i].controls.category.value.category_name" [data]="categoryList" [(ngModel)]="editindentForm.controls.items.controls[i].controls.category.value"
+                    [settings]="categorydropdownSettings" (onSelect)="onItemSelect($event, 'category')"
+                    formControlName="category">
+                  </ng-multiselect-dropdown>
+    
+                </td>
+                <td>
+    
+                  <ng-multiselect-dropdown [placeholder]="editindentForm.controls.items.controls[i].controls.products.value.product_name" [data]="products" [(ngModel)]="editindentForm.controls.items.controls[i].controls.products.value"
+                    [settings]="productdropdownSettings" (onSelect)="onItemSelect($event, 'product')"
+                    formControlName="products">
+                  </ng-multiselect-dropdown>
+    
+                </td>
+                <td>
+    
+                  <ng-multiselect-dropdown [placeholder]="editindentForm.controls.items.controls[i].controls.unit.value.unit" [data]="unitDropval" [(ngModel)]="editindentForm.controls.items.controls[i].controls.unit.value"
+                    [settings]="dropdownSettings" formControlName="unit">
+                  </ng-multiselect-dropdown>
+    
+    
+                </td>
+                <td style="width:80px">
+    
+                  <input type="text" [(ngModel)]="editindentForm.controls.items.controls[i].controls.quantity.value" class="form-control" placeholder="editindentForm.controls.items.controls[i].controls.quantity.value"
+                    formControlName="quantity" />
+                </td>
+                <td style="width:80px">
+    
+                  <input type="number" [value]="editindentForm.controls.items.controls[i].controls.mrp.value" class="form-control" [placeholder]="editindentForm.controls.items.controls[i].controls.mrp.value" formControlName="mrp"
+                    disabled />
+    
+                </td>
+              </tr>
+    
+            </tbody>
+          </table>
+        </div>
+    
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            Updated by
+          </ion-col>
+          <ion-col size="8">
+            <input type="text" disabled [(ngModel)]="editindentForm.controls.updated_by.value" class="form-control" [placeholder]="editindentForm.controls.updated_by.value"
+              formControlName="updated_by"
+              [class.error1]="!editindentForm.controls.updated_by.valid && editindentForm.controls.updated_by.dirty" />
+          </ion-col>
+        </ion-row>
+    
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            <b>Expected Date</b>
+    
+          </ion-col>
+          <ion-col size="8">
+    
+            <ion-datetime name="expecteddate" [placeholder]="editindentForm.controls.expected_date.value" displayFormat="DD/MM/YYYY"
+              [(ngModel)]="editindentForm.controls.expected_date.value" formControlName="expected_date"></ion-datetime>
+    
+            <!-- <input id="dateOfBirth" placeholder="Date " name="dateOfBirth" 
+          [value]="OrderData.expected_date"
+          class="form-control"> -->
+          </ion-col>
+        </ion-row>
+    
+    
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            <b>Delivered Date</b>
+    
+          </ion-col>
+          <ion-col size="8">
+            <ion-datetime name="expecteddate" [placeholder]="editindentForm.controls.delivered_date.value" displayFormat="DD/MM/YYYY"
+              [(ngModel)]="editindentForm.controls.delivered_date.value" formControlName="delivered_date"></ion-datetime>
+            <!-- <input class="inputdate" placeholder="DeliveredDate" [value]="OrderData.delivered_date"
+          class="form-control" type="text"  /> -->
+          </ion-col>
+        </ion-row>
+    
+    
+    
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            <b>Place*</b>
+          </ion-col>
+          <ion-col size="8">
+            <input type="text" [(ngModel)]="editindentForm.controls.place.value" 
+            class="form-control" [placeholder]="editindentForm.controls.place.value" 
+            formControlName="place" disabled />
+           
+          </ion-col>
+        </ion-row>
+    
+        <ion-row class="form-content-labels">
+          <ion-col size="4">
+            <b>Pincode*</b>
+          </ion-col>
+          <ion-col size="8">
+            <input type="text" [(ngModel)]="editindentForm.controls.pincode.value" 
+            class="form-control" [placeholder]="editindentForm.controls.pincode.value" 
+            formControlName="pincode" disabled />
+          
+          </ion-col>
+        </ion-row>
+    
+    
+    
+        <ion-button class="text-list float-right" type="submit" (click)="updateIndent(editindentForm.value)">
+          Update</ion-button>&nbsp;
+        <ion-button class="text-list float-right" (click)="modalclose()">
+          Cancle</ion-button>
+    
+      </form>
+    
+    </ion-content>
+  
+
+
+
+  <ion-content *ngIf="modalType=='viewIndent'" padding>
+
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+          <ion-col size="6">
+            Indent Id
+          </ion-col>
+          <ion-col size="6">
+            {{IndentData.indent_id}}
+          </ion-col>
+      </ion-row>
+
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6">
+          Order For
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.order_for}}
+        </ion-col>
+      </ion-row>
+  
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6">
+          Order for Id
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.ordered_for_id}}
+        </ion-col>
+      </ion-row>
+  
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6">
+          Order By
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.order_by}}
+        </ion-col>
+      </ion-row>
+
+
+
+      <div class="table-responsive">
+          <table class="table table-striped table-bordered table-sm">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Products</th>
+                <th scope="col">Unit</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+              </tr>  
+            </thead>
+             <tbody>
+              <tr class="table-success ellipsis" *ngFor="let fd of editProducts">                       
+                <td> {{ fd.category_name.category_name }} </td>
+                <td> {{ fd.product_name.product_name }}  </td>
+                <td> {{ fd.unit.unit }} </td>
+                <td style="width:80px"> {{ fd.mrp }} </td>              
+                <td style="width:80px"> {{ fd.quantity }} </td>
+              </tr>
+    
+            </tbody>
+          </table>
+        </div>
+
+
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6">
+          Expected Date
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.expected_date}}
+        </ion-col>
+      </ion-row>
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6" >
+          Delivered Date
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.Delivered_Date}}
+        </ion-col>
+      </ion-row>
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6" >
+          Place
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.place}}
+        </ion-col>
+      </ion-row>
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6" >
+          Pincode
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.pincode}}
+        </ion-col>
+      </ion-row>
+  
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6" >
+          State
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.state}}
+        </ion-col>
+      </ion-row>
+  
+  
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6" >
+          District
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.district}}
+        </ion-col>
+      </ion-row>
+  
+      <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+        <ion-col size="6" >
+          Price
+        </ion-col>
+        <ion-col size="6">
+          {{IndentData.order_total}}
+        </ion-col>
+      </ion-row>
+  
+      <div class="pt-2">
+      <ion-button class="text-list float-right" (click)="modalclose()">
+        Cancle</ion-button>
+        </div>
+   
+  </ion-content>

@@ -1,0 +1,69 @@
+<app-header></app-header>
+<ion-content>
+  <ion-row>
+    <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+      <ion-text class=" fw700 font-md" color="dark" style="padding-left: 5px;">Dashboard page</ion-text>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+      <ion-card>
+        <b (click)="expand('graph1')" style="font-size: 20px; cursor: pointer">-Total Order Amount vs
+          Month-Graph</b>
+        <div *ngIf="toggleGraph1" echarts [(options)]="chartOption" class="demo-chart"></div>
+      </ion-card>
+    </ion-col>
+    <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+      <ion-card>
+        <b (click)="expand('graph2')" style="font-size: 20px; cursor: pointer">-Total Order Amount vs Agency For The
+          Year- Pie Chart</b>
+        <div *ngIf="toggleGraph2" echarts [(options)]="option1" class="demo-chart"></div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+      <ion-card>
+        <b (click)="expand('graph3')" style="font-size: 20px; cursor: pointer">-Total Order Amount Per Month vs Field
+          Agent - Agency Wise
+          - Bar Chart</b>
+        <div *ngIf="toggleGraph3" echarts [(options)]="option" class="demo-chart"></div>
+      </ion-card>
+    </ion-col>
+
+    <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+      <ion-card>
+        <b (click)="expand('graph4')" style="font-size: 20px; cursor: pointer">-Total Order Amount Per Month Based on
+          Product
+          Category</b>
+        <div *ngIf="toggleGraph4" echarts [(options)]="options" class="demo-chart"></div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+      <ion-card>
+        <b (click)="expand('graph5')" style="font-size: 20px; cursor: pointer">-Total Order Amount of field agents for
+          the year</b>
+        <div *ngIf="toggleGraph5" echarts [(options)]="option2" class="demo-chart"></div>
+      </ion-card>
+    </ion-col>
+
+    <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+      <ion-card>
+        <b (click)="expand('graph6')" style="font-size: 20px; cursor: pointer">-Total Indents vs Successful indents
+          (Orders) for each
+          month</b>
+        <div *ngIf="toggleGraph6" echarts [(options)]="option3" class="demo-chart"></div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+      <ion-card>
+        <b (click)="expand('graph7')" style="font-size: 20px; cursor: pointer">-Total Order Amount as per the place</b>
+        <div *ngIf="toggleGraph7" echarts [(options)]="option4" class="demo-chart"></div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-content>

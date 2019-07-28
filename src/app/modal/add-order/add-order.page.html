@@ -1,0 +1,641 @@
+<!-- <ion-header>
+  <ion-toolbar  color="primary" style="color:white !important">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-title *ngIf="modalType=='addOrder'" no-padding no-margin style="font-size:14px;align-content: center"
+            class="text-left">
+            <h4 style="color:#000">Add Order</h4>
+          </ion-title>
+          <ion-title *ngIf="modalType=='editOrder'" no-padding no-margin style="font-size:14px;align-content: center"
+            class="text-left">
+            <h4 style="color:#000">Edit Order</h4>
+          </ion-title>
+          <ion-title *ngIf="modalType=='viewOrder'" no-padding no-margin style="font-size:14px;align-content: center"
+            class="text-left">
+            <h4 style="color:#000">View Order</h4>
+          </ion-title>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-header>
+  <ion-toolbar color="primary" style="color:white">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" top class="text-middle">
+          <ion-title *ngIf='modalType=="addOrder"' no-margin no-padding
+            style=" font-size: 14px !important;text-align: left;margin-left:8px"> Add Order</ion-title>
+          <ion-title *ngIf='modalType=="editOrder"' no-margin no-padding
+            style=" text-align: left;margin-left:8px;    font-size: 14px !important;">Edit Order</ion-title>
+          <ion-title *ngIf='modalType=="viewOrder"' no-margin no-padding
+            style="font-size:14px !important; text-align: left;margin-left:8px">View Order</ion-title>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content *ngIf="modalType=='addOrder'" padding>
+  <!-- <ion-list> -->
+  <form novalidate [formGroup]="orderForm">
+
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4"> Ordered for* </ion-col>
+      <ion-col size="8">
+
+        <mat-radio-group aria-label="Select an option">
+          <mat-radio-button value="farmer" *ngIf="disableAgency" checked (click)="toggleOrderedFor='farmer'">Farmer
+          </mat-radio-button>
+          <mat-radio-button value="agency" *ngIf="!disableAgency" (click)="toggleOrderedFor='agency'">Agency
+          </mat-radio-button>
+          <mat-radio-button *ngIf="!disableAgency" value="external_user" (click)="toggleOrderedFor='external_user'">
+            External user
+          </mat-radio-button>
+        </mat-radio-group>
+
+        <ng-multiselect-dropdown *ngIf="toggleOrderedFor=='agency'" [placeholder]="'Agency'" [data]="agencyList"
+          [(ngModel)]="orderModal.ordered_foragency" formControlName="ordered_foragency"
+          [settings]="agencydropdownSettings">
+        </ng-multiselect-dropdown>
+
+        <ng-multiselect-dropdown *ngIf="toggleOrderedFor=='farmer'" [placeholder]="'Farmer'" [data]="farmerList"
+          [(ngModel)]="orderModal.farmer_id" formControlName="farmer_id" [settings]="farmerdropdownSettings">
+        </ng-multiselect-dropdown>
+
+        <span *ngIf="toggleOrderedFor=='external_user'">
+          <input type="text" [(ngModel)]="orderModal.ordered_forexuser" class="form-control" placeholder="External user"
+            formControlName="ordered_forexuser" />
+        </span>
+
+      </ion-col>
+    </ion-row>
+
+
+    <!-- <ion-row class="form-content-labels">
+    <ion-col size="4">
+    Ordered By*
+    </ion-col>
+    <ion-col size="8">
+    <input type="text" [(ngModel)]="orderModal.ordered_by" class="form-control" placeholder="Ordered By"
+    formControlName="ordered_by"
+    [class.error1]="!orderForm.controls.ordered_by.valid && orderForm.controls.ordered_by.dirty" />
+    </ion-col>
+    </ion-row> -->
+
+    <ion-row class="form-content-labels" *ngIf="toggleOrderedFor=='agency' || toggleOrderedFor=='external_user'">
+      <ion-col size="4">
+        On Behalf of*
+      </ion-col>
+      <ion-col size="8">
+
+        <ng-multiselect-dropdown [placeholder]="'Agency'" [data]="agencyList" [(ngModel)]="orderModal.on_the_behalf"
+          formControlName="on_the_behalf" [settings]="agencydropdownSettings">
+        </ng-multiselect-dropdown>
+
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        Category*
+      </ion-col>
+      <ion-col size="8">
+        <ng-multiselect-dropdown [placeholder]="'category'" [data]="categoryList" [(ngModel)]="orderModal.category"
+          [settings]="categorydropdownSettings" (onSelect)="onItemSelect($event, 'category')"
+          formControlName="category">
+        </ng-multiselect-dropdown>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        Product*
+      </ion-col>
+      <ion-col size="8">
+        <ng-multiselect-dropdown [placeholder]="'product'" [data]="products" [(ngModel)]="orderModal.products"
+          [settings]="productdropdownSettings" (onSelect)="onItemSelect($event, 'product')" formControlName="product">
+        </ng-multiselect-dropdown>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        Unit*
+      </ion-col>
+      <ion-col size="8">
+        <ng-multiselect-dropdown [placeholder]="'unit'" [data]="unitDropval" [(ngModel)]="orderModal.units"
+          [settings]="dropdownSettings" formControlName="unit">
+        </ng-multiselect-dropdown>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        Quantity*
+      </ion-col>
+      <ion-col size="8">
+        <input type="number" [(ngModel)]="orderModal.quantity" class="form-control" placeholder="Enter Quantity"
+          formControlName="quantity" (keyup)="onItemSelect($event, 'quantity')"
+          [class.error1]="!orderForm.controls.quantity.valid && orderForm.controls.quantity.dirty" />
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        Price*
+      </ion-col>
+      <ion-col size="8">
+        <input type="text" [(ngModel)]="orderModal.price" class="form-control" placeholder="Enter price"
+          formControlName="price" [class.error1]="!orderForm.controls.price.valid && orderForm.controls.price.dirty" />
+      </ion-col>
+    </ion-row>
+    <div>
+      
+      <ion-button class="text-list float-right" (click)="modalclose()">
+        Cancle</ion-button>
+        <ion-button  *ngIf="!ShowAddMoreOders" [disabled]="!orderForm.valid" class="text-list float-right" (click)="addMoreOrder(orderForm.value)">
+            Proceed </ion-button>
+    </div>
+  </form>
+  <!-- </ion-list> -->
+  <!-- addMoreorders -->
+  <div *ngIf="ShowAddMoreOders">
+    <form novalidate [formGroup]="moreOrderForm">
+
+      <table class="table table-striped table-bordered table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Category*</th>
+            <th scope="col">Products*</th>
+            <th scope="col">Quantity*</th>
+            <th scope="col">Price</th>
+            <th scope="col">Unit</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let fd of formdataarray">
+          <tr class="table-success ellipsis">
+            <td>
+              <div style="width:60px;">
+                {{fd.category}}
+              </div>
+              <div class="tooltip">{{fd.category}}</div>
+
+            </td>
+            <td>
+              <div style="width: 70px">{{fd.products}}</div>
+              <div class="tooltip">{{fd.products}}</div>
+
+            </td>
+            <td>
+              <div style="width: 50px">{{fd.quantity}}</div>
+              <div class="tooltip">{{fd.quantity}}</div>
+
+            </td>
+            <td>
+              <div style="width: 50px">{{fd.price}}</div>
+              <div class="tooltip">{{fd.price}}</div>
+            </td>
+
+            <td>
+              <div style="width: 50px">{{fd.unit}}</div>
+              <div class="tooltip">{{fd.unit}}</div>
+            </td>
+
+          </tr>
+
+          <tr>
+              <td colspan="5">
+                  <ion-button [disabled]="!orderForm.valid" class="text-list float-right" (click)="addMoreOrder(orderForm.value)">
+                      Add Row</ion-button>
+              </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+
+      <ion-row class="form-content-labels">
+        <ion-col size="4" style="padding-top: 13px">
+          Expected Date
+        </ion-col>
+        <ion-col size="8">
+          <ion-datetime name="expecteddate" placeholder="Expected date" displayFormat="DD/MM/YYYY"
+            [(ngModel)]="orderModal.expected_date" formControlName="expected_date"></ion-datetime>
+
+          <!-- <input class="inputdate form-control" name="expdtdate" formControlName="expected_date"
+    placeholder="Expected Date" [(ngModel)]="orderModal.expected_date" type="text" bsDatepicker
+    autocomplete="off" /> -->
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="toggleOrderedFor=='external_user'" class="form-content-labels">
+        <ion-col size="4">
+          Place
+        </ion-col>
+        <ion-col size="8">
+          <input type="text" name="place" [(ngModel)]="orderModal.place" class="form-control" placeholder="Enter Place"
+            formControlName="place" />
+        </ion-col>
+      </ion-row>
+
+
+      <ion-row *ngIf="toggleOrderedFor=='external_user'" class="form-content-labels">
+        <ion-col size="4">
+          Pincode
+        </ion-col>
+        <ion-col size="8">
+          <input type="number" (keyup)="checkExtractbutton($event)" [(ngModel)]="orderModal.pincode"
+            class="form-control" placeholder="Enter Pincode" maxlength="6" formControlName="pincode" />
+        </ion-col>
+        <!-- <ion-col size="2">
+    <ion-button [disabled]="extractButton" size="small" class="float-right"
+    (click)="extractDistrictState(orderModal.pincode)">
+    Extract</ion-button>
+    </ion-col> -->
+      </ion-row>
+      <ion-row *ngIf="toggleOrderedFor=='external_user'">
+        <ion-col size='4'>
+          <ion-label> State </ion-label>
+        </ion-col>
+        <ion-col size="8">
+          <ng-select [items]="state" formControlName="state" placeholder="Select state" [(ngModel)]="orderModal.state">
+          </ng-select>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="toggleOrderedFor=='external_user'">
+        <ion-col size='4'>
+          <ion-label> District </ion-label>
+        </ion-col>
+        <ion-col size="8">
+          <ng-select [items]="district" formControlName="district" placeholder="Select District"
+            [(ngModel)]="orderModal.district">
+          </ng-select>
+        </ion-col>
+
+      </ion-row>
+
+      <ion-row class="form-content-labels">
+        <ion-col size="4">
+          Total order
+        </ion-col>
+        <ion-col size="8">
+          <input type="text" [(ngModel)]="orderModal.total_order" placeholder="Total order" class="form-control"
+            formControlName="total_order" />
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="form-content-labels">
+        <ion-col size="4">
+          Total Price*
+        </ion-col>
+        <ion-col size="8">
+          <input type="number" disabled [(ngModel)]="orderModal.total_price" placeholder="Total price"
+            class="form-control" formControlName="total_price" />
+        </ion-col>
+      </ion-row>
+
+      <!-- 
+    <ion-row>
+    <ion-col size="4">
+    Status
+    </ion-col>
+    <ion-col size="8">
+    <ng-select [items]="status" placeholder="Status" [(ngModel)]="orderModal.status" formControlName="status">
+    </ng-select>
+    </ion-col>
+    </ion-row> -->
+      <ion-button class="text-list float-right" type="submit" (click)="addtotalOrder(moreOrderForm.value)">
+        Create</ion-button>
+      <ion-button class="text-list float-right" (click)="modalclose()">
+        Cancel</ion-button>
+      {{result}}
+
+    </form>
+
+  </div>
+</ion-content>
+
+
+
+
+
+<ion-content *ngIf="modalType=='editOrder'" padding>
+
+  <form novalidate [formGroup]="editOrderForm">
+
+    <ion-row style="display:none" class="form-content-labels">
+      <ion-col size="4">
+        Order ID
+      </ion-col>
+      <ion-col size="8">
+        <input [(ngModel)]="editOrderForm.controls.order_id.value" class="form-control" formControlName="order_id" readonly [placeholder]="editOrderForm.controls.order_id.value" />
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        Ordered For
+      </ion-col>
+      <ion-col size="8">
+        <input type="text" [(ngModel)]="OrderData.order_for" class="form-control" placeholder="OrderedFor"
+          formControlName="ordered_for" readonly />
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        Status*
+      </ion-col>
+      <ion-col size="8">
+        <ng-select [placeholder]="'Status'" [items]="status" [(ngModel)]="OrderData.order_status"
+          formControlName="order_status" (onSelect)="setOrderType($event)">
+        </ng-select>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        TotalPrice
+      </ion-col>
+      <ion-col size="8">
+        <input type="text" [(ngModel)]="OrderData.order_total" class="form-control" placeholder="price"
+          formControlName="price" disabled />
+
+      </ion-col>
+    </ion-row>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Category</th>
+            <th scope="col">Products</th>
+            <th scope="col">Unit</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+          </tr>  
+        </thead>
+         <tbody formArrayName="items" *ngFor="let fd of editOrderForm.get('items').controls; let i = index;">
+          <tr [formGroupName]="i" class="table-success ellipsis"> 
+              <!-- <tbody formArrayName="items" *ngFor="let fd of OrderData.products; let i = index">
+                  <tr [formGroupName]="i" class="table-success ellipsis">  -->
+                   
+            <td>
+
+              <ng-multiselect-dropdown [placeholder]="editOrderForm.controls.items.controls[i].controls.category.value.category_name" [data]="categoryList" [(ngModel)]="editOrderForm.controls.items.controls[i].controls.category.value"
+                [settings]="categorydropdownSettings" (onSelect)="onItemSelect($event, 'category')"
+                formControlName="category">
+              </ng-multiselect-dropdown>
+
+            </td>
+            <td>
+
+              <ng-multiselect-dropdown [placeholder]="editOrderForm.controls.items.controls[i].controls.products.value.product_name" [data]="products" [(ngModel)]="editOrderForm.controls.items.controls[i].controls.products.value"
+                [settings]="productdropdownSettings" (onSelect)="onItemSelect($event, 'product')"
+                formControlName="products">
+              </ng-multiselect-dropdown>
+
+            </td>
+            <td>
+
+              <ng-multiselect-dropdown [placeholder]="editOrderForm.controls.items.controls[i].controls.unit.value.unit" [data]="unitDropval" [(ngModel)]="editOrderForm.controls.items.controls[i].controls.unit.value"
+                [settings]="dropdownSettings" formControlName="unit">
+              </ng-multiselect-dropdown>
+
+
+            </td>
+            <td style="width:80px">
+
+              <input type="text" [(ngModel)]="editOrderForm.controls.items.controls[i].controls.quantity.value" class="form-control" placeholder="editOrderForm.controls.items.controls[i].controls.quantity.value"
+                formControlName="quantity" />
+            </td>
+            <td style="width:80px">
+
+              <input type="number" [value]="editOrderForm.controls.items.controls[i].controls.mrp.value" class="form-control" placeholder="editOrderForm.controls.items.controls[i].controls.mrp.value" formControlName="editOrderForm.controls.items.controls[i].controls.mrp"
+                disabled />
+
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        Updated by
+      </ion-col>
+      <ion-col size="8">
+        <input type="text" disabled [(ngModel)]="OrderData.updated_by" class="form-control" placeholder="updated by"
+          formControlName="updated_by"
+          [class.error1]="!editOrderForm.controls.updated_by.valid && editOrderForm.controls.updated_by.dirty" />
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        <b>Expected Date</b>
+
+      </ion-col>
+      <ion-col size="8">
+
+        <ion-datetime name="expecteddate" placeholder="Expected date" displayFormat="DD/MM/YYYY"
+          [(ngModel)]="OrderData.expected_date" formControlName="expected_date"></ion-datetime>
+
+        <!-- <input id="dateOfBirth" placeholder="Date " name="dateOfBirth" 
+      [value]="OrderData.expected_date"
+      class="form-control"> -->
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        <b>Delivered Date</b>
+
+      </ion-col>
+      <ion-col size="8">
+        <ion-datetime name="expecteddate" placeholder="Delivered Date" displayFormat="DD/MM/YYYY"
+          [(ngModel)]="OrderData.delivered_date" formControlName="delivered_date"></ion-datetime>
+        <!-- <input class="inputdate" placeholder="DeliveredDate" [value]="OrderData.delivered_date"
+      class="form-control" type="text"  /> -->
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size='6'>
+        <ion-label><b>State*</b></ion-label>
+        <input class="inputdate" placeholder="state" [value]="OrderData.state" class="form-control" type="text"
+          disabled />
+
+      </ion-col>
+      <ion-col size='6'>
+        <ion-label><b>District* </b></ion-label>
+        <input class="inputdate" placeholder="District" [value]="OrderData.district" class="form-control" type="text"
+          disabled />
+      </ion-col>
+
+    </ion-row>
+
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        <b>Place*</b>
+      </ion-col>
+      <ion-col size="8">
+        <input type="text" [value]="OrderData.place" class="form-control" placeholder="Enter Place" disabled />
+        {{OrderData.Place}}
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels">
+      <ion-col size="4">
+        <b>Pincode*</b>
+      </ion-col>
+      <ion-col size="8">
+        <input type="text" [value]="OrderData.pincode" class="form-control" placeholder="Enter Pincode" disabled />
+        <!-- {{OrderData|json}} -->
+      </ion-col>
+    </ion-row>
+
+
+
+    <ion-button class="text-list float-right" type="submit" (click)="updateOrder(editOrderForm.value)">
+      Update</ion-button>&nbsp;
+    <ion-button class="text-list float-right" (click)="modalclose()">
+      Cancle</ion-button>
+
+  </form>
+
+</ion-content>
+
+
+<ion-content *ngIf="modalType=='viewOrder'" padding>
+  <form novalidate [formGroup]="orderForm" *ngFor="let item of editProducts">
+    <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        Order For
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.order_for}}
+      </ion-col>
+    </ion-row>
+
+    <!-- <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        Former Id
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.farmer_id}}
+      </ion-col> 
+    </ion-row>-->
+
+    <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        Order By
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.order_by}}
+      </ion-col>
+    </ion-row>
+
+     
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-sm">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Products</th>
+              <th scope="col">Unit</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Price</th>
+            </tr>  
+          </thead>
+           <tbody>
+            <tr class="table-success ellipsis" *ngFor="let fd of editProducts">                       
+              <td> {{ fd.category_name.category_name }} </td>
+              <td> {{ fd.product_name.product_name }}  </td>
+              <td> {{ fd.unit.unit }} </td>
+              <td style="width:80px"> {{ fd.mrp }} </td>              
+              <td style="width:80px"> {{ fd.quantity }} </td>
+            </tr>
+  
+          </tbody>
+        </table>
+      </div>
+
+
+    <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        Expected Date
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.expected_date}}
+      </ion-col>
+    </ion-row>
+    <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        Created Date
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.created_date}}
+      </ion-col>
+    </ion-row>
+    <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        Place
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.place}}
+      </ion-col>
+    </ion-row>
+    <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        Pincode
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.pincode}}
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        State
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.state}}
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        District
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.district}}
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="form-content-labels" style="border-bottom: 1px solid #cccaca">
+      <ion-col size="6">
+        Price
+      </ion-col>
+      <ion-col size="6">
+        {{OrderData.order_total}}
+      </ion-col>
+    </ion-row>
+
+    <div class="pt-2">
+      <ion-button class="text-list float-right" (click)="modalclose()">
+        Cancle</ion-button>
+    </div>
+  </form>
+</ion-content>

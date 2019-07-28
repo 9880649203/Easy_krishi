@@ -1,0 +1,22 @@
+<div class="row mr-0 document-actions" style="display:inline-flex;position: absolute;">
+    <!-- <div *ngIf="mainParams.edit">
+    <fieldset title="Edit" (click)="openModal(mainParams,'edit')" title='Edit' class="icon">
+    <ion-icon name="create"></ion-icon>
+    </fieldset>
+    </div>
+    <div *ngIf="mainParams.view" class="icon">
+    <fieldset title="View" (click)="openModal(mainParams,'view');">
+    <ion-icon name="eye"></ion-icon> 
+    </fieldset>
+    </div> -->
+    <div *ngIf="mainParams.editOrder">
+    <fieldset title="Edit" (click)="openEditrole(mainParams,'edit')" title='Edit' class="icon">
+    <ion-icon name="create"></ion-icon>
+    </fieldset>
+    </div>
+    <div *ngIf="mainParams.viewOrder" class="icon">
+    <fieldset title="View" (click)="openEditrole(mainParams,'view');">
+    <ion-icon name="eye"></ion-icon>
+    </fieldset>
+    </div>
+    </div>
